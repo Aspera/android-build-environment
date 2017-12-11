@@ -1,12 +1,13 @@
 Android Build on Docker Container
 ===
 
+This project relied heavily on [uber-common android-build-environment](https://github.com/uber-common/android-build-environment.git).
 
 ### Mac OSX
 
 #### Prerequisites
 
-##### Create container with docker-machine  :
+##### Create container with docker-machine:
 
     $ docker-machine create -d virtualbox --virtualbox-disk-size "200000"  --virtualbox-memory 4096 --virtualbox-hostonly-cidr "192.168.90.1/24" default
 
@@ -17,7 +18,7 @@ Android Build on Docker Container
 
     $ eval "$(docker-machine env default)"
 
-    $ docker build -t uber/android-build-environment .
+    $ docker build -t uber/android-build-environment.
 
 ##### Android Build :
 
@@ -30,7 +31,6 @@ Android Build on Docker Container
 ##### Having connectivity issue when connect via VPN
 
 Stop the docker-machine vm:
-
 
 	$ docker-machine stop default
 	
