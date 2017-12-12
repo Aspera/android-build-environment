@@ -6,10 +6,10 @@ ENV DOCKER_ANDROID_DISPLAY_NAME mobileci-docker
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN rm -rf /var/lib/apt/lists/*
-RUN apt-get update
-RUN apt-get full-upgrade -y
+RUN apt-get -qq update
+RUN apt-get -qq full-upgrade -y
 
-RUN apt-get install -y \
+RUN apt-get install -qq -y \
   autoconf \
   build-essential \
   bzip2 \

@@ -4,4 +4,4 @@ services:
   - docker
 
 script:
-  - docker build --quiet=true -t uber/android-build-environment .
+  - travis_wait 30 docker build -q -t bemehiser/android-build-environment .
