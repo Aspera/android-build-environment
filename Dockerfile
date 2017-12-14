@@ -5,17 +5,18 @@ ENV DOCKER_ANDROID_DISPLAY_NAME mobileci-docker
 
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN rm -rf /var/lib/apt/lists/*
-RUN apt-get -qq update
-RUN apt-get -qq full-upgrade -y
+RUN rm -rf /var/lib/apt/lists/* && \
+    apt-get -q update && \
+    apt-get -q full-upgrade -y
 
-RUN apt-get install -qq -y \
+RUN apt-get install -q -y \
   autoconf \
   build-essential \
   bzip2 \
   curl \
   gcc \
   git \
+  gperf \
   groff \
   lib32stdc++6 \
   lib32z1 \
@@ -36,6 +37,7 @@ RUN apt-get install -qq -y \
   pkg-config \
   python-software-properties \
   rsync \
+  ruby \
   software-properties-common \
   unzip \
   wget \
@@ -43,35 +45,35 @@ RUN apt-get install -qq -y \
   zlib1g-dev \
   --no-install-recommends
 
-RUN rm -rf /var/lib/apt/lists/*
-RUN apt-get clean
+RUN rm -rf /var/lib/apt/lists/* && \
+    apt-get clean
 
 # Install Go
-RUN wget -q https://redirector.gvt1.com/edgedl/go/go1.9.2.linux-amd64.tar.gz
-RUN tar xzf go1.9.2.linux-amd64.tar.gz
-RUN mv go /usr/local/go
-RUN ln -s /usr/local/go/bin/go /usr/local/bin/go
+RUN wget -q https://redirector.gvt1.com/edgedl/go/go1.9.2.linux-amd64.tar.gz && \
+    tar xzf go1.9.2.linux-amd64.tar.gz && \
+    mv go /usr/local/go && \
+    ln -s /usr/local/go/bin/go /usr/local/bin/go
 
 # Install Android SDK Tools
-RUN wget -q https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip
-RUN unzip -q sdk-tools-linux-3859397.zip -d android-sdk
-RUN mv android-sdk /usr/local/android-sdk
-RUN rm sdk-tools-linux-3859397.zip
+RUN wget -q https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip && \
+    unzip -q sdk-tools-linux-3859397.zip -d android-sdk && \
+    mv android-sdk /usr/local/android-sdk && \
+    rm sdk-tools-linux-3859397.zip
 ENV PATH $PATH:/usr/local/android-sdk/tools/bin
 
 # Accept license
 RUN yes | sdkmanager --licenses
 
 # Install Android SDK
-RUN touch ~/.android/repositories.cfg
-RUN sdkmanager --update
-RUN sdkmanager "platform-tools" "build-tools;26.0.3" "platforms;android-26" "cmake;3.6.4111459"
+RUN touch ~/.android/repositories.cfg && \
+    sdkmanager --update && \
+    sdkmanager "platform-tools" "build-tools;26.0.3" "platforms;android-26" "cmake;3.6.4111459"
 
 # Install Android NDK
-RUN wget -q http://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip
-RUN unzip -q android-ndk-r16b-linux-x86_64.zip
-RUN mv android-ndk-r16b /usr/local/android-ndk
-RUN rm android-ndk-r16b-linux-x86_64.zip
+RUN wget -q http://dl.google.com/android/repository/android-ndk-r16b-linux-x86_64.zip && \
+    unzip -q android-ndk-r16b-linux-x86_64.zip && \
+    mv android-ndk-r16b /usr/local/android-ndk && \
+    rm android-ndk-r16b-linux-x86_64.zip
 
 # Environment variables
 ENV ANDROID_HOME /usr/local/android-sdk
@@ -99,8 +101,8 @@ ENV GRADLE_OPTS "-XX:+UseG1GC -XX:MaxGCPauseMillis=1000"
 RUN apt-get clean
 
 # Add build user account, values are set to default below
-ENV RUN_USER mobileci
-ENV RUN_UID 5089
+ENV RUN_USER jenkins
+ENV RUN_UID 8504
 
 RUN id $RUN_USER || adduser --uid "$RUN_UID" \
     --gecos 'Build User' \
@@ -109,14 +111,13 @@ RUN id $RUN_USER || adduser --uid "$RUN_UID" \
     --disabled-password "$RUN_USER"
 
 # Fix permissions
-RUN chown -R $RUN_USER:$RUN_USER $ANDROID_HOME $ANDROID_SDK_HOME $ANDROID_NDK_HOME
-RUN chmod -R a+rx $ANDROID_HOME $ANDROID_SDK_HOME $ANDROID_NDK_HOME
+RUN chown -R $RUN_USER:$RUN_USER $ANDROID_HOME $ANDROID_SDK_HOME $ANDROID_NDK_HOME && \
+    chmod -R a+rx $ANDROID_HOME $ANDROID_SDK_HOME $ANDROID_NDK_HOME
 
-# Creating project directories prepared for build when running
-# `docker run`
+# Creating project directories prepared for build when running `docker run`
 ENV PROJECT /project
-RUN mkdir $PROJECT
-RUN chown -R $RUN_USER:$RUN_USER $PROJECT
+RUN mkdir $PROJECT && \
+    chown -R $RUN_USER:$RUN_USER $PROJECT
 WORKDIR $PROJECT
 
 USER $RUN_USER
