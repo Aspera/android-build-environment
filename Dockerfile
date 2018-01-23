@@ -48,11 +48,22 @@ RUN apt-get install -q -y \
 RUN rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
+# Install CMake
+RUN wget -q https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
+    tar xzf cmake-3.10.2.tar.gz && \
+    cd cmake-3.10.2 && \
+    ./configure && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf cmake-3.10.2.tar.gz cmake-3.10.2
+
 # Install Go
 RUN wget -q https://redirector.gvt1.com/edgedl/go/go1.9.2.linux-amd64.tar.gz && \
     tar xzf go1.9.2.linux-amd64.tar.gz && \
     mv go /usr/local/go && \
-    ln -s /usr/local/go/bin/go /usr/local/bin/go
+    ln -s /usr/local/go/bin/go /usr/local/bin/go && \
+    rm go1.9.2.linux-amd64.tar.gz
 
 # Install Android SDK Tools
 RUN wget -q https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip && \
@@ -79,6 +90,7 @@ RUN wget -q http://dl.google.com/android/repository/android-ndk-r16b-linux-x86_6
 ENV ANDROID_HOME /usr/local/android-sdk
 ENV ANDROID_SDK_HOME $ANDROID_HOME
 ENV ANDROID_NDK_HOME /usr/local/android-ndk
+ENV ANDROID_NDK_r16b $ANDROID_NDK_HOME
 ENV PATH $PATH:/usr/local/go/bin
 ENV GOPATH $HOME/go
 ENV PATH $PATH:$GOPATH/bin
