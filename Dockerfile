@@ -50,10 +50,10 @@ RUN rm -rf /var/lib/apt/lists/* && \
 
 # Install CMake
 RUN mkdir -p /tmp/cmake && \
-    pushd /tmp/cmake && \
+    cd /tmp/cmake && \
     wget 'https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.sh' && \
     bash cmake-3.12.1-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir && \
-    popd && \
+    cd - && \
     rm -rf /tmp/cmake
 
 # Install Android SDK Tools
