@@ -16,7 +16,7 @@ RUN apt-get install -q -y \
   curl \
   gcc \
   git \
-  gperf \
+  golang \
   groff \
   lib32stdc++6 \
   lib32z1 \
@@ -49,21 +49,12 @@ RUN rm -rf /var/lib/apt/lists/* && \
     apt-get clean
 
 # Install CMake
-RUN wget -q https://cmake.org/files/v3.10/cmake-3.10.2.tar.gz && \
-    tar xzf cmake-3.10.2.tar.gz && \
-    cd cmake-3.10.2 && \
-    ./configure && \
-    make && \
-    make install && \
-    cd .. && \
-    rm -rf cmake-3.10.2.tar.gz cmake-3.10.2
-
-# Install Go
-RUN wget -q https://redirector.gvt1.com/edgedl/go/go1.9.2.linux-amd64.tar.gz && \
-    tar xzf go1.9.2.linux-amd64.tar.gz && \
-    mv go /usr/local/go && \
-    ln -s /usr/local/go/bin/go /usr/local/bin/go && \
-    rm go1.9.2.linux-amd64.tar.gz
+RUN mkdir -p /tmp/cmake && \
+    pushd /tmp/cmake && \
+    wget 'https://cmake.org/files/v3.12/cmake-3.12.1-Linux-x86_64.sh' && \
+    bash cmake-3.12.1-Linux-x86_64.sh --prefix=/usr/local --exclude-subdir && \
+    popd && \
+    rm -rf /tmp/cmake
 
 # Install Android SDK Tools
 RUN wget -q https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip && \
